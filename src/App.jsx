@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,32 +13,41 @@ const App = () => {
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
   const [url, setUrl] = useState("")
-  const [succesMessage, setSuccesMessage] = useState("")
-  const [errorMessage, setErrorMessage] = useState("")
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
 // setting the state with input of the login form:
-  const handleLogin = async (event) => {
-    event.preventDefault()
+const handleLogin = async (event) => {
+  event.preventDefault();
 
-    try {
-      const user = await loginService.login({
+  try {
+    const user = await loginService.login(
+      {
         username, password,
-      })
-      
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      ) 
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (exception) {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+      },
+      setErrorMessage
+    );
+
+    window.localStorage.setItem(
+      'loggedBlogappUser', JSON.stringify(user)
+    );
+
+    blogService.setToken(user.token);
+    setUser(user);
+    setUsername('');
+    setPassword('');
+    setSuccessMessage('Login successful');
+    setTimeout(() => {
+      setSuccessMessage(null);
+    }, 5000);
+  } catch (error) {
+    console.error("Login error:", error);
+    setErrorMessage('Error. Wrong credentials. Please try again.');
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
   }
+};
 
   // getting blogs based on if the user state changes.
   useEffect(() => {
@@ -95,13 +106,16 @@ const handleNewBlog = async (event) => {
         author,
         url,
       });
-
+      setSuccessMessage(`${newBlog.title} by ${newBlog.author} was added`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
       setBlogs([...blogs, newBlog]);
       setTitle('')
       setAuthor('')
       setUrl('')
     } catch (exception) {
-      setErrorMessage('Wrong input')
+      setErrorMessage('Wrong input. Please try again. Error')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -145,6 +159,7 @@ const newBlogForm = () => (
   if (user === null) {
     return (
       <div>
+      <Notification message={errorMessage} />
         <h2>Log in to application</h2>
         {loginForm()}
       </div>
@@ -152,6 +167,7 @@ const newBlogForm = () => (
   }
   return (
     <div>
+      <Notification message={successMessage} />
       <h2>blogs</h2>
       <p>{user.username} logged in </p> 
       <button onClick={() => handleLogout()}>logout</button>
