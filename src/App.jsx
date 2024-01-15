@@ -141,7 +141,7 @@ const handleNewBlog = async (event) => {
       <h2>blogs</h2>
       <p>{user.username} logged in </p> 
       <button onClick={() => handleLogout()}>logout</button>
-      <Togglable buttonLabel="new note">
+      <Togglable buttonLabel="new blog">
         <BlogForm
           handleNewBlog={handleNewBlog}
           title={title}
