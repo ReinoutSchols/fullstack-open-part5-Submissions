@@ -1,4 +1,3 @@
-
 // Blog form
 const BlogForm = ({
     title, 
@@ -9,6 +8,7 @@ const BlogForm = ({
     handleAuthorChange, 
     handleUrlChange
     }) => {
+
         return (
             <div>
                 <h2>create new</h2>
