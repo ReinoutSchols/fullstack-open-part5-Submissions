@@ -12,6 +12,8 @@ const Blog = ({ blog }) => {
   }
 
   const [viewBlog, setViewBlog] = useState(false)
+  
+  console.log('Rendering Blog component');
 
   const hideWhenVisible = { display: viewBlog ? 'none' : '' }
   const showWhenVisible = { display: viewBlog ? '' : 'none' }
@@ -36,7 +38,7 @@ const Blog = ({ blog }) => {
             likes {blog.likes} <button>Like</button>
         </div>
           {blog.user.username}
-        
+        {console.log(blog.user.username)}
         </div>
       </div>
     </div>

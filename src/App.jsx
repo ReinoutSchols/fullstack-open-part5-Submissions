@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -8,7 +8,6 @@ import Togglable from './components/Togglable'
 
 // find out why blog is not being saved
 const App = () => {
-  const [blogVisible, setBlogVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
@@ -18,6 +17,7 @@ const App = () => {
   const [url, setUrl] = useState("")
   const [successMessage, setSuccessMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+
 
 // setting the state with input of the login form:
 const handleLogin = async (event) => {
@@ -58,6 +58,7 @@ const handleLogin = async (event) => {
       setBlogs( blogs )
     )  
   }, [user])
+  
 
   // using an effect hook to get the local stored credentials on the first render.
   useEffect(() => {
@@ -109,12 +110,14 @@ const handleNewBlog = async (event) => {
         author,
         url,
       });
+
       console.log('New blog created:', newBlog);
       setSuccessMessage(`${newBlog.title} by ${newBlog.author} was added`)
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
-      setBlogs([...blogs, newBlog]);
+      setBlogs((prevBlogs) => [...prevBlogs, { ...newBlog, user: user }])
+      console.log(blogs)
       setTitle('')
       setAuthor('')
       setUrl('')
@@ -125,6 +128,7 @@ const handleNewBlog = async (event) => {
       }, 5000)
     }
   }
+
 
   if (user === null) {
     return (
