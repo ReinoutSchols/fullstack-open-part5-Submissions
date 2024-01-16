@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, handleLike, handleDelete, currentUser}) => {
+const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -12,8 +12,8 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser}) => {
   }
 
   const [viewBlog, setViewBlog] = useState(false)
-  
-  console.log('Rendering Blog component');
+
+  console.log('Rendering Blog component')
 
   const hideWhenVisible = { display: viewBlog ? 'none' : '' }
   const showWhenVisible = { display: viewBlog ? '' : 'none' }
@@ -39,10 +39,8 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser}) => {
           {blog.url} <br/>
           <div>
             likes {blog.likes} <button onClick={handleLike}>Like</button>
-        </div>
+          </div>
           {blog.user.username}
-        {console.log(`blog.user.id: ${blog.user.id} `)}
-        {console.log(`currentUser.id: ${currentUser.id} `)}
         </div>
         {canRemove && <button onClick={handleDelete}>Remove</button>}
       </div>
