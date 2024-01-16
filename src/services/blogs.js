@@ -32,5 +32,16 @@ const update = async (id, newObject) => {
     console.log("Error in update", error)
   }
 }
+const remove = async (id) => {
+  const config = {
+    headers: { Authorization: token },
+  }
+  try {
+  const response = await axios.delete(`${ baseUrl }/${id}`, config)
+  return response.data
+  } catch(error) {
+    console.log("Error in deleting a blog", error)
+  }
+}
 
-export default { getAll, create, update, setToken }
+export default { getAll, create, update, setToken, remove }
