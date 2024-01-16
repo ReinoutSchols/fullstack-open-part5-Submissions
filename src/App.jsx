@@ -5,6 +5,7 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
+import lodash from 'lodash';
 
 // find out why blog is not being saved
 const App = () => {
@@ -76,6 +77,16 @@ const handleLogin = async (event) => {
     setUser(null)
   }
 
+// Sorting the blogs by likes
+  useEffect(() => {
+    // sorting in descending order, if b.likes is greater then a.likes, b comes before a
+    const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+    // Only setting the blogsstate if it is different from the sortedblogs, was getting a lot of infinity loops otherwise.
+    if (!lodash.isEqual(sortedBlogs, blogs)) {
+      setBlogs(sortedBlogs)
+    }
+  }, [blogs])
+
   // loginform handler
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -109,6 +120,7 @@ const handleNewBlog = async (event) => {
         title,
         author,
         url,
+
       });
 
       console.log('New blog created:', newBlog);
@@ -128,7 +140,31 @@ const handleNewBlog = async (event) => {
       }, 5000)
     }
   }
-
+// Handling the like button 
+const handleLike = async (id) => {
+  try {
+    // finding the blog with the id that is liked
+    const blogToUpdate = blogs.find(blog => blog.id === id)
+    // adding a like
+    const updatedBlog = {...blogToUpdate, likes: blogToUpdate.likes + 1 }
+    // if id matches then the prevblog gets copied and the updated blog gets added to this copy.
+    setBlogs((prevBlogs) => prevBlogs.map(prevBlog =>
+      prevBlog.id === id ? { ...prevBlog, ...updatedBlog } : prevBlog
+    ))
+    // sending the put request.
+    blogService.update(id, updatedBlog)
+   
+    setSuccessMessage(`${updatedBlog.title} by ${updatedBlog.author} was liked`)
+    setTimeout(() => {
+      setSuccessMessage(null)
+    }, 5000)
+  } catch (exception) {
+    setErrorMessage('Error when liking a blog. Error')
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+}
 
   if (user === null) {
     return (
@@ -157,7 +193,11 @@ const handleNewBlog = async (event) => {
         />
       </Togglable>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog 
+        key={blog.id} 
+        blog={blog} 
+        handleLike={() => handleLike(blog.id)}
+        />
       )}
     </div>
   )
