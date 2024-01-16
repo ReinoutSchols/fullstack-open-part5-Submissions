@@ -5,7 +5,7 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
-import lodash from 'lodash';
+import lodash from 'lodash'
 
 // find out why blog is not being saved
 const App = () => {
@@ -22,7 +22,7 @@ const App = () => {
 
 // setting the state with input of the login form:
 const handleLogin = async (event) => {
-  event.preventDefault();
+  event.preventDefault()
 
   try {
     const user = await loginService.login(
@@ -30,28 +30,28 @@ const handleLogin = async (event) => {
         username, password,
       },
       setErrorMessage
-    );
+    )
 
     window.localStorage.setItem(
       'loggedBlogappUser', JSON.stringify(user)
-    );
+    )
 
     blogService.setToken(user.token);
-    setUser(user);
-    setUsername('');
-    setPassword('');
-    setSuccessMessage('Login successful');
+    setUser(user)
+    setUsername('')
+    setPassword('')
+    setSuccessMessage('Login successful')
     setTimeout(() => {
-      setSuccessMessage(null);
-    }, 5000);
+      setSuccessMessage(null)
+    }, 5000)
   } catch (error) {
-    console.error("Login error:", error);
-    setErrorMessage('Error. Wrong credentials. Please try again.');
+    console.error("Login error:", error)
+    setErrorMessage('Error. Wrong credentials. Please try again.')
     setTimeout(() => {
-      setErrorMessage(null);
-    }, 5000);
+      setErrorMessage(null)
+    }, 5000)
   }
-};
+}
 
   // getting blogs based on if the user state changes.
   useEffect(() => {
@@ -120,19 +120,20 @@ const handleNewBlog = async (event) => {
         title,
         author,
         url,
-
-      });
-
+      })
       console.log('New blog created:', newBlog);
+
       setSuccessMessage(`${newBlog.title} by ${newBlog.author} was added`)
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
+
       setBlogs((prevBlogs) => [...prevBlogs, { ...newBlog, user: user }])
       console.log(blogs)
       setTitle('')
       setAuthor('')
       setUrl('')
+
     } catch (exception) {
       setErrorMessage('Wrong input. Please try again. Error')
       setTimeout(() => {
@@ -145,14 +146,17 @@ const handleLike = async (id) => {
   try {
     // finding the blog with the id that is liked
     const blogToUpdate = blogs.find(blog => blog.id === id)
+
     // adding a like
     const updatedBlog = {...blogToUpdate, likes: blogToUpdate.likes + 1 }
+
     // if id matches then the prevblog gets copied and the updated blog gets added to this copy.
     setBlogs((prevBlogs) => prevBlogs.map(prevBlog =>
       prevBlog.id === id ? { ...prevBlog, ...updatedBlog } : prevBlog
     ))
+
     // sending the put request.
-    blogService.update(id, updatedBlog)
+    await blogService.update(id, updatedBlog)
    
     setSuccessMessage(`${updatedBlog.title} by ${updatedBlog.author} was liked`)
     setTimeout(() => {
@@ -160,6 +164,37 @@ const handleLike = async (id) => {
     }, 5000)
   } catch (exception) {
     setErrorMessage('Error when liking a blog. Error')
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
+  }
+}
+
+// Handling the delete button 
+const handleDelete = async (id) => {
+  try {
+    // Find the blog to delete from the state
+    const blogToDelete = blogs.find(blog => blog.id === id)
+
+    if (!blogToDelete) {
+      console.error(`Blog with id ${id} not found`)
+      return
+    }
+    if (window.confirm(`You want to delete the blog with the title: ${blogToDelete.title} ?`)) {
+
+      // sending the delete request.
+      await blogService.remove(id, user.token)
+
+      // deleting blog in state
+      setBlogs(lodash.filter(blogs, (blog) => blog.id !== id))
+
+      setSuccessMessage(`${blogToDelete.title} was deleted`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    }
+  } catch (exception) {
+    setErrorMessage('Error when deleting a blog. Error')
     setTimeout(() => {
       setErrorMessage(null)
     }, 5000)
@@ -197,6 +232,8 @@ const handleLike = async (id) => {
         key={blog.id} 
         blog={blog} 
         handleLike={() => handleLike(blog.id)}
+        handleDelete={() => handleDelete(blog.id)}
+        currentUser={user}
         />
       )}
     </div>
