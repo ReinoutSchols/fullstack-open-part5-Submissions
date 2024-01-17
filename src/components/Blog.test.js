@@ -53,7 +53,7 @@ describe('<Blog />', () => {
     expect(getByText(/1000/)).toBeInTheDocument()
   })
 
-  test.only('When like button is pressed twice, the event handler passed as props to Blog is called twice', async () => {
+  test('When like button is pressed twice, the event handler passed as props to Blog is called twice', async () => {
     const blog = {
       title: 'Component testing is done with react-testing-library',
       author: 'testauthor',
