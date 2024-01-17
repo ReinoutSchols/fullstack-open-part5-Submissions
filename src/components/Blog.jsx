@@ -33,7 +33,7 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
       <div style={hideWhenVisible}  >
         <button onClick={toggleVisibility} >View</button>
       </div>
-      <div style={showWhenVisible} className= 'togglableHidden' data-testid="blog-details">
+      <div style={showWhenVisible} className= 'togglableHidden' data-testid='blog-details'>
         <button onClick={toggleVisibility}>Hide</button>
         <div>
           {blog.url} <br/>
