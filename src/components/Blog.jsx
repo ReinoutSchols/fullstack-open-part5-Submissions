@@ -23,7 +23,7 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
   }
 
   // checking conditions to toggle remove button
-  const canRemove = currentUser && blog.user && currentUser.username === blog.user.username
+  // const canRemove = currentUser && blog.user && currentUser.username === blog.user.username
 
   return (
     <div style={blogStyle}>
@@ -40,9 +40,9 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
           <div>
             likes {blog.likes} <button onClick={handleLike}>Like</button>
           </div>
-          {blog.user.username}
+          {/*  {blog.user.username} */}
         </div>
-        {canRemove && <button onClick={handleDelete}>Remove</button>}
+        {/*  {canRemove && <button onClick={handleDelete}>Remove</button>}*/}
       </div>
     </div>
   )
