@@ -16,7 +16,7 @@ describe('Blog app', function() {
   })
 
   describe('Login',function() {
-    it('user can login with correct credentials', function () {
+    it.only('user can login with correct credentials', function () {
       cy.get('input:first').type('reinout')
       cy.get('input:last').type('password')
       cy.contains('login').click()
