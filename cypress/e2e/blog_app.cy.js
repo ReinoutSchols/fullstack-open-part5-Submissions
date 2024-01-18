@@ -7,7 +7,13 @@ describe('Blog app', function() {
       username: 'reinout',
       password: 'password'
     }
+    const user2 = {
+      name: 'mluukkai',
+      username: 'mluukkai',
+      password: 'password'
+    }
     cy.request('POST', 'http://localhost:3003/api/users/', user)
+    cy.request('POST', 'http://localhost:3003/api/users/', user2)
     cy.visit('http://localhost:5173')
   })
 
@@ -45,7 +51,7 @@ describe('Blog app', function() {
       cy.contains('amazing title amazing author')
     })
 
-    it.only('Blog can be liked', function() {
+    it('Blog can be liked', function() {
       cy.contains('new blog').click()
       cy.get('#title-id').type('amazing title')
       cy.get('#author-id').type('amazing author')
@@ -54,6 +60,38 @@ describe('Blog app', function() {
       cy.get('#view').click()
       cy.get('#like').click()
       cy.contains('likes 1')
+    })
+
+    it('Blog can be deleted by creator', function() {
+      cy.contains('new blog').click()
+      cy.get('#title-id').type('amazing title')
+      cy.get('#author-id').type('amazing author')
+      cy.get('#url-id').type('url')
+      cy.get('#create').click()
+      cy.get('#view').click()
+      cy.get('#delete').click()
+      cy.contains('amazing title was deleted')
+    })
+  })
+
+  describe('When logged in as different user', function() {
+
+    it.only('Only the creator of the blog can see the delete button', function() {
+
+      cy.login({ username: 'reinout', password: 'password' })
+
+      cy.contains('new blog').click()
+      cy.get('#title-id').type('amazing title')
+      cy.get('#author-id').type('amazing author')
+      cy.get('#url-id').type('url')
+      cy.get('#create').click()
+
+      cy.contains('logout').click()
+
+      cy.login({ username: 'mluukkai', password: 'password' })
+      cy.visit('http://localhost:5173')
+      cy.get('#view').click()
+      cy.get('#delete').should('not.exist')
     })
   })
 })
