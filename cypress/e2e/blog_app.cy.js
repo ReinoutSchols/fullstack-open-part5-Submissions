@@ -16,18 +16,35 @@ describe('Blog app', function() {
   })
 
   describe('Login',function() {
-    it.only('user can login with correct credentials', function () {
+    it('user can login with correct credentials', function () {
       cy.get('input:first').type('reinout')
       cy.get('input:last').type('password')
       cy.contains('login').click()
       cy.contains('reinout logged in')
     })
 
-    it.only('user login fails with wrong credentials', function () {
+    it('user login fails with wrong credentials', function () {
       cy.get('input:first').type('reinout')
       cy.get('input:last').type('password1')
       cy.contains('login').click()
       cy.get('.error').should('have.css', 'color', 'rgb(255, 0, 0)')
+    })
+  })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.get('input:first').type('reinout')
+      cy.get('input:last').type('password')
+      cy.contains('login').click()
+      cy.contains('reinout logged in')
+    })
+
+    it.only('A blog can be created', function() {
+      cy.contains('new blog').click()
+      cy.get('#title-id').type('title of note')
+      cy.get('#author-id').type('author')
+      cy.get('#url-id').type('url')
+      cy.get('#create').click()
     })
   })
 })
