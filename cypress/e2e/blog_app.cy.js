@@ -1,6 +1,6 @@
 describe('Blog app', function() {
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    cy.request('POST',  `${Cypress.env('BACKEND')}/testing/reset`)
 
     const user = {
       name: 'reinout schols',
@@ -12,9 +12,9 @@ describe('Blog app', function() {
       username: 'mluukkai',
       password: 'password'
     }
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
-    cy.request('POST', 'http://localhost:3003/api/users/', user2)
-    cy.visit('http://localhost:5173')
+    cy.request('POST', `${Cypress.env('BACKEND')}/users/`, user)
+    cy.request('POST', `${Cypress.env('BACKEND')}/users/`, user2)
+    cy.visit('')
   })
 
   it('Login form is shown', function() {
@@ -75,8 +75,7 @@ describe('Blog app', function() {
   })
 
   describe('When logged in as different user', function() {
-
-    it.only('Only the creator of the blog can see the delete button', function() {
+    it('Only the creator of the blog can see the delete button', function() {
 
       cy.login({ username: 'reinout', password: 'password' })
 
@@ -89,9 +88,34 @@ describe('Blog app', function() {
       cy.contains('logout').click()
 
       cy.login({ username: 'mluukkai', password: 'password' })
-      cy.visit('http://localhost:5173')
+      cy.visit('')
       cy.get('#view').click()
       cy.get('#delete').should('not.exist')
+    })
+  })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.login({ username: 'reinout', password: 'password' })
+    })
+
+    it.only('the blog with most likes is at the top', function() {
+      cy.contains('new blog').click()
+      cy.get('#title-id').type('blog with 2 likes')
+      cy.get('#author-id').type('amazing author')
+      cy.get('#url-id').type('url')
+      cy.get('#create').click()
+      cy.get('#view').click()
+      cy.get('#like').click()
+      cy.get('#like').click()
+
+      cy.get('#title-id').type('blog with zero likes')
+      cy.get('#author-id').type('noob')
+      cy.get('#url-id').type('nooburl')
+      cy.get('#create').click()
+      cy.get('.bloggos').eq(1).contains('View').click()
+
+      cy.get('.bloggos').eq(0).should('contain', 'blog with 2 likes')
     })
   })
 })

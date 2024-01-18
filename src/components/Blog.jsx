@@ -26,7 +26,7 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
   const canRemove = currentUser && blog.user && currentUser.username === blog.user.username
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='bloggos'>
       <div id = 'default'>
         {blog.title} {blog.author}
       </div>
