@@ -3,7 +3,7 @@ describe('Blog app', function() {
     cy.request('POST', 'http://localhost:3003/api/testing/reset')
 
     const user = {
-      name: 'Matti Luukkainen',
+      name: 'reinout schols',
       username: 'reinout',
       password: 'password'
     }
@@ -33,18 +33,27 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.get('input:first').type('reinout')
-      cy.get('input:last').type('password')
-      cy.contains('login').click()
-      cy.contains('reinout logged in')
+      cy.login({ username: 'reinout', password: 'password' })
     })
 
-    it.only('A blog can be created', function() {
+    it('A blog can be created', function() {
       cy.contains('new blog').click()
-      cy.get('#title-id').type('title of note')
-      cy.get('#author-id').type('author')
+      cy.get('#title-id').type('amazing title')
+      cy.get('#author-id').type('amazing author')
       cy.get('#url-id').type('url')
       cy.get('#create').click()
+      cy.contains('amazing title amazing author')
+    })
+
+    it.only('Blog can be liked', function() {
+      cy.contains('new blog').click()
+      cy.get('#title-id').type('amazing title')
+      cy.get('#author-id').type('amazing author')
+      cy.get('#url-id').type('url')
+      cy.get('#create').click()
+      cy.get('#view').click()
+      cy.get('#like').click()
+      cy.contains('likes 1')
     })
   })
 })

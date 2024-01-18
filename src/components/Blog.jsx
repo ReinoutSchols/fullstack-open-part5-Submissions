@@ -31,14 +31,14 @@ const Blog = ({ blog, handleLike, handleDelete, currentUser }) => {
         {blog.title} {blog.author}
       </div>
       <div style={hideWhenVisible}  >
-        <button onClick={toggleVisibility} >View</button>
+        <button onClick={toggleVisibility} id="view">View</button>
       </div>
       <div style={showWhenVisible} className= 'togglableHidden' data-testid='blog-details'>
         <button onClick={toggleVisibility}>Hide</button>
         <div>
           {blog.url} <br/>
           <div>
-            likes {blog.likes} <button onClick={handleLike}>Like</button>
+            likes {blog.likes} <button onClick={handleLike} id="like">Like</button>
           </div>
           {/*  {blog.user.username} */}
         </div>
